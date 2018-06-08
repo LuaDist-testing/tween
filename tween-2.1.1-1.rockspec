@@ -1,17 +1,17 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "tween"
-version = "2.1.0-1"
+version = "2.1.1-1"
 -- LuaDist source
 source = {
-  tag = "2.1.0-1",
+  tag = "2.1.1-1",
   url = "git://github.com/LuaDist-testing/tween.git"
 }
 -- Original source
 -- source = {
 --    url = "git://github.com/kikito/tween.lua",
 --    dir = "tween.lua",
---    tag = "v2.1.0"
+--    tag = "v2.1.1"
 -- }
 description = {
    summary = "tweening functions for lua",
