@@ -1,5 +1,5 @@
 local tween = {
-  _VERSION     = 'tween 2.0.0',
+  _VERSION     = 'tween 2.1.0',
   _DESCRIPTION = 'tweening for lua',
   _URL         = 'https://github.com/kikito/tween.lua',
   _LICENSE     = [[
@@ -345,6 +345,7 @@ end
 
 function Tween:update(dt)
   assert(type(dt) == 'number', "dt must be a number")
+  self.initial = self.initial or copyTables({}, self.target, self.subject)
   return self:set(self.clock + dt)
 end
 
@@ -359,8 +360,6 @@ function tween.new(duration, subject, target, easing)
     subject   = subject,
     target    = target,
     easing    = easing,
-
-    initial   = copyTables({},target,subject),
     clock     = 0
   }, Tween_mt)
 end

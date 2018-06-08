@@ -107,7 +107,9 @@ This method is equivalent to `t:set(0)`.
 
 Easing functions are functions that express how slow/fast the interpolation happens in tween.
 
-`tween.lua` comes with 45 default easing functions already built-in (adapted from [Emmanuel Oga's easing library](https://github.com/EmmanuelOga/easing).
+`tween.lua` comes with 45 default easing functions already built-in (adapted from [Emmanuel Oga's easing library](https://github.com/EmmanuelOga/easing)).
+
+![tween families](https://kikito.github.io/tween.lua/img/tween-families.png)
 
 The easing functions can be found in the table `tween.easing`.
 
@@ -125,22 +127,21 @@ Each family (except `linear`) has 4 variants:
 * `inOut` starts and ends slow, but it's fast in the middle
 * `outIn` starts and ends fast, but it's slow in the middle
 
-| family | in    | out     | inOut    | outIn    |
-| [linear](https://github.com/kikito/tween.lua/raw/master/graphs/linear.png)   |linear   |linear     |linear      |linear      |
-| [quad](https://github.com/kikito/tween.lua/raw/master/graphs/quad.png)       |inQuad   |outQuad    |inOutQuad   |outInQuad   |
-| [cubic](https://github.com/kikito/tween.lua/raw/master/graphs/cubic.png)     |inCubic  |outCubic   |inOutCubic  |outInCubic  |
-| [quart](https://github.com/kikito/tween.lua/raw/master/graphs/quart.png)     |inQuart  |outQuart   |inOutQuart  |outInQuart  |
-| [quint](https://github.com/kikito/tween.lua/raw/master/graphs/quint.png)     |inQuint  |outQuint   |inOutQuint  |outInQuint  |
-| [expo](https://github.com/kikito/tween.lua/raw/master/graphs/expo.png)       |inExpo   |outExpo    |inOutExpo   |outInExpo   |
-| [sine](https://github.com/kikito/tween.lua/raw/master/graphs/sine.png)       |inSine   |outSine    |inOutSine   |outInSine   |
-| [circle](https://github.com/kikito/tween.lua/raw/master/graphs/circle.png)   |inCirc   |outCirc    |inOutCirc   |outInCirc   |
-| [back](https://github.com/kikito/tween.lua/raw/master/graphs/back.png)       |inBack   |outBack    |inOutBack   |outInBack   |
-| [bounce](https://github.com/kikito/tween.lua/raw/master/graphs/bounce.png)   |inBounce |outBounce  |inOutBounce |outInBounce |
-| [elastic](https://github.com/kikito/tween.lua/raw/master/graphs/elastic.png) |inElastic|outElastic |inOutElastic|outInElastic|
+| family      | in        | out        | inOut        | outIn        |
+|-------------|-----------|------------|--------------|--------------|
+| **Linear**  | linear    | linear     | linear       | linear       |
+| **Quad**    | inQuad    | outQuad    | inOutQuad    | outInQuad    |
+| **Cubic**   | inCubic   | outCubic   | inOutCubic   | outInCubic   |
+| **Quart**   | inQuart   | outQuart   | inOutQuart   | outInQuart   |
+| **Quint**   | inQuint   | outQuint   | inOutQuint   | outInQuint   |
+| **Expo**    | inExpo    | outExpo    | inOutExpo    | outInExpo    |
+| **Sine**    | inSine    | outSine    | inOutSine    | outInSine    |
+| **Circ**    | inCirc    | outCirc    | inOutCirc    | outInCirc    |
+| **Back**    | inBack    | outBack    | inOutBack    | outInBack    |
+| **Bounce**  | inBounce  | outBounce  | inOutBounce  | outInBounce  |
+| **Elastic** | inElastic | outElastic | inOutElastic | outInElastic |
 
-You may want to give a look to the graphs folder on this repository to get a better idea of what I'm talking about.
-
-When you specify an easing fucntion, you can either give the function name as a string. The following two are equivalent:
+When you specify an easing function, you can either give the function name as a string. The following two are equivalent:
 
 ```lua
 local t1 = tween.new(10, subject, {x=10}, tween.easing.linear)
@@ -151,6 +152,31 @@ But since `'linear'` is the default, you can also do this:
 
 ```lua
 local t3 = tween.new(10, subject, {x=10})
+```
+
+## Custom easing functions
+
+You are not limited to tween's easing functions; if you pass a function parameter in the easing, it will be used.
+
+The passed function will need to take 4 parameters:
+
+* `t` (time): starts in 0 and usually moves towards duration
+* `b` (begin): initial value of the of the property being eased.
+* `c` (change): ending value of the property - starting value of the property
+* `d` (duration): total duration of the tween
+
+And must return the new value after the interpolation occurs.
+
+Here's an example using [LÖVE's Bezier Curve](https://love2d.org/wiki/BezierCurve) (you will need LÖVE for this example, but tween.lua does not need LÖVE in general).
+
+``` lua
+local cubicbezier = function (x1, y1, x2, y2)
+  local curve = love.math.newBezierCurve(0, 0, x1, y1, x2, y2, 1, 1)
+  return function (t, b, c, d) return c * curve:evaluate(t/d) + b end
+end
+
+local label = { x=200, y=0, text = "hello" }
+local labelTween = tween.new(4, label, {y=300}, cubicbezier(.35, .97, .58, .61))
 ```
 
 # Gotchas / Warnings
@@ -187,10 +213,4 @@ See the LICENSE.txt file for details.
 
 # Changelog
 
-v2.0.0:
-
-* the library no longer has "an internal list of tweens". Instead, `tween.new` returns an individual tween, which
-  must be updated individually with `t:update(dt)`
-* tweens can go forwards and backwards (trying to set the internal clock to a negative number raises an error)
-
-
+See CHANGELOG.md for a full list of changes.
